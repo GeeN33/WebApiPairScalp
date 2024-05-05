@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  webapipairscalp:
+    image: ${DOCKER_REGISTRY-}webapipairscalp
+    build:
+      context: .
+      dockerfile: WebApiPairScalp/Dockerfile

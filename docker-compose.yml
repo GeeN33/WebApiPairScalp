@@ -3,6 +3,10 @@ version: '3.4'
 services:
   webapipairscalp:
     image: ${DOCKER_REGISTRY-}webapipairscalp
+    restart: always
     build:
       context: .
       dockerfile: WebApiPairScalp/Dockerfile
+    
+    ports: 
+       - "8080:8080"

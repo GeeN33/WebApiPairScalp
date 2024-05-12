@@ -38,7 +38,7 @@ namespace WebApiPairScalp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IDbConnection db, [FromBody] Pairs pair)
         {
-            var sql1 = $"SELECT * FROM pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2";
+            var sql1 = $"SELECT * FROM pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2 AND per = @per";
 
             var result1 = await db.QueryAsync<Pairs>(sql1, pair);
 
@@ -46,8 +46,8 @@ namespace WebApiPairScalp.Controllers
             {
                 var sql2 = """
                 UPDATE pairs
-                SET symbol1 = @symbol1, symbol2 = @symbol2, kf1 = @kf1, kf2 = @kf2, pp = @pp, pv = @pv, updata = @updata
-                WHERE symbol1 = @symbol1 AND symbol2 = @symbol2
+                SET kf1 = @kf1, kf2 = @kf2, pp = @pp, pv = @pv, updata = @updata
+                WHERE symbol1 = @symbol1 AND symbol2 = @symbol2 AND per = @per
                 """;
                
                 var result2 = await db.ExecuteAsync(sql2, pair);
@@ -62,8 +62,8 @@ namespace WebApiPairScalp.Controllers
             else
             {
                 var sql3 = """
-                INSERT INTO pairs (symbol1, symbol2, kf1, kf2, pp, pv, updata)
-                VALUES (@symbol1, @symbol2, @kf1, @kf2, @pp, @pv, @updata)
+                INSERT INTO pairs (symbol1, symbol2, per, kf1, kf2, pp, pv, updata)
+                VALUES (@symbol1, @symbol2, @per, @kf1, @kf2, @pp, @pv, @updata)
                 """;
 
                 var result3 = await db.ExecuteAsync(sql3, pair);
@@ -81,13 +81,13 @@ namespace WebApiPairScalp.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(IDbConnection db, [FromBody] Pairs pair)
         {
-            var sql1 = $"SELECT * FROM pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2";
+            var sql1 = $"SELECT * FROM pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2 AND per = @per";
 
             var result1 = await db.QueryAsync<Pairs>(sql1, pair);
 
             if (result1.Any())
             {
-                var sql2 = $"delete from pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2";
+                var sql2 = $"delete from pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2 AND per = @per";
 
                 var result2 = await db.ExecuteAsync(sql2, pair);
 

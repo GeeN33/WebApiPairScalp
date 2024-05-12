@@ -9,6 +9,6 @@ public class Pairs
     public double Kf2 { get; set; }
     public double Pp { get; set; }
     public double Pv { get; set; }
-    public DateTime UpData { get; set; }
+    public DateTime UpData { get; set; } = DateTime.Now;
 }
 

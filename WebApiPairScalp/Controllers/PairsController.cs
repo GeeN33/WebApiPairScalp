@@ -11,12 +11,12 @@ namespace WebApiPairScalp.Controllers
     [ApiController]
     public class PairsController : ControllerBase
     {
-
-        // GET: api/<PairsController>
+        //http://82.97.241.41:5002/api/pairs
+        
         [HttpGet]
         public async Task <IActionResult> Get(IDbConnection db)
         {
-            var sql = "SELECT * FROM pairs"; // Убедитесь, что название таблицы и поля соответствуют вашей БД
+            var sql = "SELECT * FROM pairs ORDER BY pp ASC"; // Убедитесь, что название таблицы и поля соответствуют вашей БД
 
             try
             {
@@ -34,17 +34,72 @@ namespace WebApiPairScalp.Controllers
             }
         }
 
-        // POST api/<PairsController>
+        
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Create(IDbConnection db, [FromBody] Pairs pair)
         {
+            var sql1 = $"SELECT * FROM pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2";
+
+            var result1 = await db.QueryAsync<Pairs>(sql1, pair);
+
+            if (result1.Any())
+            {
+                var sql2 = """
+                UPDATE pairs
+                SET symbol1 = @symbol1, symbol2 = @symbol2, kf1 = @kf1, kf2 = @kf2, pp = @pp, pv = @pv, updata = @updata
+                WHERE symbol1 = @symbol1 AND symbol2 = @symbol2
+                """;
+               
+                var result2 = await db.ExecuteAsync(sql2, pair);
+               
+                if (result2 > 0)
+                {
+                    return Ok(new { Message = "pair updated successfully" });
+                }
+                return NotFound(new { Message = "pair not found" });
+
+            }
+            else
+            {
+                var sql3 = """
+                INSERT INTO pairs (symbol1, symbol2, kf1, kf2, pp, pv, updata)
+                VALUES (@symbol1, @symbol2, @kf1, @kf2, @pp, @pv, @updata)
+                """;
+
+                var result3 = await db.ExecuteAsync(sql3, pair);
+
+                if (result3 > 0)
+                {
+                    return Ok(new { Message = "pair create successfully" });
+                }
+                return NotFound(new { Message = "pair not found" });
+            }
+
         }
 
-   
-        // DELETE api/<PairsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(IDbConnection db, [FromBody] Pairs pair)
         {
+            var sql1 = $"SELECT * FROM pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2";
+
+            var result1 = await db.QueryAsync<Pairs>(sql1, pair);
+
+            if (result1.Any())
+            {
+                var sql2 = $"delete from pairs WHERE symbol1 = @symbol1 AND symbol2 = @symbol2";
+
+                var result2 = await db.ExecuteAsync(sql2, pair);
+
+                if (result2 > 0)
+                {
+                    return Ok(new { Message = "pair delete successfully" });
+                }
+                return NotFound(new { Message = "pair not found" });
+
+            }
+
+            return NotFound(new { Message = "pair not found" });
         }
     }
 }

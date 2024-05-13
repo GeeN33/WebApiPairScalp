@@ -11,6 +11,16 @@ builder.Services.AddScoped<IDbConnection>((s) =>
     return conn;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5034", "http://82.97.241.41:5002", "http://api.chillacoin.ru", "https://api.chillacoin.ru");
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+    });
+
+});
 
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
@@ -26,7 +36,7 @@ var app = builder.Build();
 //}
 
 
-
+app.UseCors();
 app.MapControllers();
 
 app.Run();

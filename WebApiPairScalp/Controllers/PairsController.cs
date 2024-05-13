@@ -7,12 +7,12 @@ using WebApiPairScalp.Models;
 
 namespace WebApiPairScalp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PairsController : ControllerBase
     {
-        //http://82.97.241.41:5002/api/pairs
-        
+        //https://api.chillacoin.ru/pairs
+
         [HttpGet]
         public async Task <IActionResult> Get(IDbConnection db)
         {
